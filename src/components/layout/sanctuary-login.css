@@ -13,14 +13,12 @@
 .guardian-head{transition:transform .35s;transform-origin:200px 245px}
 .guardian-eyes-open{animation:guardian-blink 6s infinite;transform-origin:200px 161px}
 .guardian-eyes-open>g{transition:transform .2s}
-.guardian-eyes-closed,.guardian-cover-eyes,.guardian-thumbs-up,.guardian-hearts{opacity:0;transition:opacity .2s,transform .35s}
-.guardian-cover-left,.guardian-cover-right{transform:translateY(46px);transition:transform .4s cubic-bezier(.2,.8,.25,1)}
-.guardian-cover-eyes{pointer-events:none}
+.guardian-eyes-closed,.guardian-thumbs-up,.guardian-hearts{opacity:0;transition:opacity .2s,transform .35s}
+.guardian-moving-arms{pointer-events:none}.guardian-cover-right{transition:opacity .15s}.mood-success .guardian-cover-right{opacity:0}
 .guardian-thumbs-up{transform:translateY(18px);transform-origin:270px 280px}
 .guardian-arm-left-rest,.guardian-arm-right-rest{transition:opacity .15s}
 .mood-password .guardian-eyes-open{opacity:0;animation:none}
-.mood-password .guardian-eyes-closed,.mood-password .guardian-cover-eyes{opacity:1}
-.mood-password .guardian-cover-left,.mood-password .guardian-cover-right{transform:translateY(0)}
+.mood-password .guardian-eyes-closed{opacity:1}
 .mood-password .guardian-arm-left-rest,.mood-password .guardian-arm-right-rest{opacity:0}
 .mood-email .guardian-head{transform:rotate(2deg)}
 .mood-error .guardian-head{animation:guardian-shake .4s}

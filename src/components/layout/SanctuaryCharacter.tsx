@@ -1,6 +1,18 @@
+import { memo } from 'react';
+import { motion, useReducedMotion } from 'framer-motion';
+
 export type CharacterMood = 'idle' | 'email' | 'password' | 'error' | 'success';
 
-export function SanctuaryCharacter({ mood, gaze }: { mood: CharacterMood; gaze: number }) {
+export const SanctuaryCharacter = memo(function SanctuaryCharacter({ mood, gaze }: { mood: CharacterMood; gaze: number }) {
+  const covering = mood === 'password';
+  const reducedMotion = useReducedMotion();
+  const armTransition = { duration: reducedMotion ? 0 : .65, times: [0, .48, 1], ease: 'easeInOut' as const };
+  const leftRest = 'M128 415Q104 480 110 550Q112 570 127 555L144 544Q128 545 130 508Q132 462 143 396Z';
+  const leftMiddle = 'M128 415Q81 399 80 355Q78 319 108 299L122 318Q103 333 106 354Q104 383 143 396Z';
+  const leftRaised = 'M128 415Q80 391 91 315Q96 246 137 174L150 190Q119 258 116 315Q111 365 143 396Z';
+  const rightRest = 'M273 415Q297 480 291 550Q289 570 274 555L257 544Q273 545 271 508Q269 462 258 396Z';
+  const rightMiddle = 'M273 415Q320 399 321 355Q323 319 293 299L279 318Q298 333 295 354Q297 383 258 396Z';
+  const rightRaised = 'M273 415Q321 391 310 315Q305 246 263 174L250 190Q282 258 285 315Q290 365 258 396Z';
   const description = mood === 'password'
     ? 'Squidward covers both eyes with his hands'
     : mood === 'success' ? 'Squidward gives you a thumbs up' : 'Squidward stands facing you';
@@ -29,8 +41,6 @@ export function SanctuaryCharacter({ mood, gaze }: { mood: CharacterMood; gaze: 
           <path d="M177 190L174 263L199 281L226 263L224 190" fill="url(#guardian-skin)"/>
           <path d="M174 261L164 270L184 293L199 281L215 293L237 270L226 261M199 282L199 312" fill="none" stroke="#59482f" strokeWidth="3"/>
           <circle cx="205" cy="299" r="1.6" fill="#e4c28e" stroke="none"/>
-          <g className="guardian-arm-left-rest" fill="url(#guardian-skin)"><path d="M124 294Q107 321 114 353Q115 369 126 365Q135 362 129 351Q126 326 142 307Z"/><path d="M117 350L122 356" fill="none" strokeWidth="2"/></g>
-          <g className="guardian-arm-right-rest" fill="url(#guardian-skin)"><path d="M278 295Q293 323 286 354Q285 369 274 365Q266 362 272 351Q275 327 260 307Z"/><path d="M282 351L277 357" fill="none" strokeWidth="2"/></g>
           </g>
           <g className="guardian-head">
             <path d="M74 135C46 101 61 52 108 29C153 6 244 6 290 31C339 57 353 103 324 137Q301 164 261 172L261 245Q286 248 290 267Q292 289 274 289Q237 276 200 279Q161 276 126 289Q107 290 108 269Q109 249 139 245L139 172Q97 162 74 135Z" fill="url(#guardian-skin)"/>
@@ -49,16 +59,20 @@ export function SanctuaryCharacter({ mood, gaze }: { mood: CharacterMood; gaze: 
             <path d="M200 173Q179 199 169 230Q153 271 174 297Q185 311 200 313Q217 311 228 297Q249 271 231 230Q221 199 200 173Z" fill="url(#guardian-skin)"/>
           </g>
           {/* Raised arms render in front of the face; both palms actually cover the eyes. */}
-          <g className="guardian-cover-eyes" fill="url(#guardian-skin)">
+          <g className="guardian-moving-arms" fill="url(#guardian-skin)">
             <g className="guardian-cover-left">
-              <path d="M128 415Q80 391 91 315Q96 246 137 174L150 190Q119 258 116 315Q111 365 143 396Z"/>
+              <motion.path initial={false} animate={{ d: covering ? [leftRest, leftMiddle, leftRaised] : [leftRaised, leftMiddle, leftRest] }} transition={armTransition}/>
+              <motion.g initial={false} animate={{ x: covering ? [-45, -70, 0] : [0, -70, -45], y: covering ? [365, 145, 0] : [0, 145, 365], rotate: covering ? [-12, -25, 0] : [0, -25, -12] }} transition={armTransition} style={{ originX: .5, originY: .8 }}>
               <path d="M139 181Q130 166 137 150L146 132Q151 125 157 132L160 143L163 126Q166 119 173 123Q178 126 176 141L181 131Q187 125 192 132L190 150Q200 149 201 158L197 181Q190 199 173 200Q151 199 139 181Z"/>
               <path d="M157 143L154 162M176 141L173 162M190 150L186 167" fill="none" stroke="#518781" strokeWidth="2"/>
+              </motion.g>
             </g>
             <g className="guardian-cover-right">
-              <path d="M273 415Q321 391 310 315Q305 246 263 174L250 190Q282 258 285 315Q290 365 258 396Z"/>
+              <motion.path initial={false} animate={{ d: covering ? [rightRest, rightMiddle, rightRaised] : [rightRaised, rightMiddle, rightRest] }} transition={{ ...armTransition, delay: reducedMotion ? 0 : .06 }}/>
+              <motion.g initial={false} animate={{ x: covering ? [45, 70, 0] : [0, 70, 45], y: covering ? [365, 145, 0] : [0, 145, 365], rotate: covering ? [12, 25, 0] : [0, 25, 12] }} transition={{ ...armTransition, delay: reducedMotion ? 0 : .06 }} style={{ originX: .5, originY: .8 }}>
               <path d="M261 181Q270 166 263 150L254 132Q249 125 243 132L240 143L237 126Q234 119 227 123Q222 126 224 141L219 131Q213 125 208 132L210 150Q200 149 199 158L203 181Q210 199 227 200Q249 199 261 181Z"/>
               <path d="M243 143L246 162M224 141L227 162M210 150L214 167" fill="none" stroke="#518781" strokeWidth="2"/>
+              </motion.g>
             </g>
           </g>
           <g className="guardian-thumbs-up" fill="url(#guardian-skin)">
@@ -73,4 +87,4 @@ export function SanctuaryCharacter({ mood, gaze }: { mood: CharacterMood; gaze: 
       </svg>
     </div>
   );
-}
+});
