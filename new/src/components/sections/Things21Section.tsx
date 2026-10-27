@@ -1,3 +1,4 @@
+import { EmptyState } from '../ui/EmptyState';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Plus, Trash2, Edit3 } from 'lucide-react';
@@ -95,6 +96,7 @@ export const Things21Section: React.FC = () => {
       </div>
 
       {/* Numbered Cards Grid */}
+      {items.length === 0 && <EmptyState onAdd={() => setIsModalOpen(true)} label="نضيف حاجة بتجمعنا؟"/>}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {items.map((item, index) => (
           <motion.div

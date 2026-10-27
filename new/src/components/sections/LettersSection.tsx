@@ -1,3 +1,4 @@
+import { EmptyState } from '../ui/EmptyState';
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Mail, Plus, Heart, Feather, Calendar, Trash2, Edit3 } from 'lucide-react';
@@ -100,6 +101,7 @@ export const LettersSection: React.FC = () => {
       </div>
 
       {/* Envelopes Grid */}
+      {letters.length === 0 && <EmptyState onAdd={() => setIsModalOpen(true)} label="نكتب أول رسالة؟"/>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {letters.map((letter) => (
           <motion.div

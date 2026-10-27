@@ -1,3 +1,4 @@
+import { EmptyState } from '../ui/EmptyState';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Sparkles, Plus, Calendar, MapPin, Star, Heart, Trash2, Edit3 } from 'lucide-react';
@@ -107,6 +108,7 @@ export const TimelineSection: React.FC = () => {
         </Button>
       </div>
 
+      {milestones.length === 0 && <EmptyState onAdd={() => setIsModalOpen(true)} label="نكتب أول حكاية؟"/>}
       {/* Timeline List */}
       <div className="relative pl-6 sm:pl-10 space-y-10">
         {/* Continuous Guideline */}
@@ -200,7 +202,8 @@ export const TimelineSection: React.FC = () => {
                 </p>
 
                 {item.photos && item.photos.length > 0 && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
+                  
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
                     {item.photos.map((src, pIdx) => (
                       <div key={pIdx} className="overflow-hidden rounded-xl bg-surface-low dark:bg-white/5 border border-primary/10">
                         <img

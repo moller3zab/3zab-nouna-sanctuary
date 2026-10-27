@@ -1,3 +1,4 @@
+import { EmptyState } from '../ui/EmptyState';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Heart, Pizza, Coffee, Tv, Globe, Zap, Utensils, Plus, Trash2, Edit3 } from 'lucide-react';
@@ -128,6 +129,7 @@ export const FavoritesSection: React.FC = () => {
       </div>
 
       {/* Side-by-side comparison grid */}
+      {favorites.length === 0 && <EmptyState onAdd={() => setIsModalOpen(true)} label="نضيف حاجة بنحبها؟"/>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         
         {/* Nouna Card */}

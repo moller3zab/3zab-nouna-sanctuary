@@ -1,3 +1,4 @@
+import { StitchPlayer } from './StitchPlayer';
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Music, Plus, Play, Pause, Disc, ExternalLink, Trash2, Edit3 } from 'lucide-react';
@@ -137,72 +138,10 @@ export const SoundtrackSection: React.FC = () => {
           </p>
         </div>
 
-        <Button onClick={() => setIsModalOpen(true)} className="gap-2 shadow-md">
-          <Plus className="w-4 h-4" />
-          <span>Add Song</span>
-        </Button>
+
       </div>
 
-      {/* Active Vinyl Player Strip */}
-      {embedUrl ? (
-        <div className="bg-surface-container dark:bg-surface-dark-card p-4 sm:p-6 rounded-3xl shadow-elevated border border-primary/10 dark:border-white/10 w-full max-w-3xl mx-auto overflow-hidden">
-          {embedUrl.includes('youtube') ? (
-            <div className="w-full aspect-video rounded-xl overflow-hidden shadow-inner">
-              <iframe width="100%" height="100%" src={embedUrl} title="YouTube player" frameBorder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-            </div>
-          ) : (
-            <div className="w-full rounded-xl overflow-hidden shadow-inner" style={{ height: '152px' }}>
-              <iframe title="Music player" src={embedUrl} width="100%" height="100%" frameBorder="0" allowFullScreen allow="clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="bg-surface-container dark:bg-surface-dark-card p-6 sm:p-8 rounded-3xl shadow-elevated border border-primary/10 dark:border-white/10 flex flex-col md:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-5 w-full md:w-auto">
-            {/* Vinyl Visual */}
-            <div className="relative w-20 h-20 rounded-full bg-[#1a1618] flex items-center justify-center shrink-0 shadow-2xl">
-              <motion.div
-                animate={{ rotate: isPlaying ? 360 : 0 }}
-                transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
-                className="w-full h-full rounded-full flex items-center justify-center border-4 border-[#2d2426]"
-              >
-                <div className="w-8 h-8 rounded-full bg-secondary-light flex items-center justify-center">
-                  <div className="w-2.5 h-2.5 rounded-full bg-surface-lowest" />
-                </div>
-              </motion.div>
-            </div>
-
-            {/* Song info */}
-            <div className="flex flex-col text-left">
-              <span className="text-[10px] font-bold tracking-widest text-secondary uppercase">
-                CURRENT HARMONY
-              </span>
-              <h3 className="font-serif text-2xl font-bold text-primary dark:text-surface-bright">
-                {activeSong ? activeSong.title : 'No song in the archive yet'}
-              </h3>
-              <span className="text-xs text-ink-muted dark:text-ink-dark-muted font-medium">
-                {activeSong ? activeSong.artist : 'Add a song to begin'}
-              </span>
-            </div>
-          </div>
-
-          {/* Dynamic Soundwave Bars */}
-          <div className="flex items-center gap-1.5 h-10 px-6 py-2 bg-surface-low dark:bg-white/5 rounded-2xl w-full md:w-64 justify-center">
-            {[...Array(10)].map((_, i) => (
-              <motion.span
-                key={i}
-                animate={{ height: isPlaying ? [10, 32, 14, 28, 10] : 10 }}
-                transition={{ repeat: Infinity, duration: 1 + i * 0.1, ease: 'easeInOut' }}
-                className={`w-1 rounded-full ${i % 2 === 0 ? 'bg-primary dark:bg-secondary-light' : 'bg-secondary'}`}
-              />
-            ))}
-          </div>
-
-          <div className="flex items-center gap-3">
-            {activeSong && /\.(mp3|m4a|ogg|wav)(\?|$)/i.test(activeSong.url) ? <audio key={activeSong.id} src={activeSong.url} controls preload="none" onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)} aria-label={activeSong.title} /> : activeSong?.url && activeSong.url !== '#' ? <a href={activeSong.url} target="_blank" rel="noopener noreferrer" className="rounded-full bg-primary text-white px-4 py-3 text-sm inline-flex items-center gap-2"><ExternalLink size={17}/> Open track</a> : <span className="text-sm text-ink-subtle">Add a track to listen.</span>}
-          </div>
-        </div>
-      )}
+      <StitchPlayer song={activeSong} songs={songs} onSelect={setActiveSong} onAdd={() => setIsModalOpen(true)} embedUrl={embedUrl}/>
 
       {/* Song Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
