@@ -42,7 +42,7 @@ The GitHub repository stores the source; pushing code does not automatically upd
 
 ## Login interactions
 
-The guardian stands facing forward, follows email entry, closes his eyes and blushes during password entry, and gives a thumbs up after successful sign-in. Reduced-motion preferences disable animation. The 1.5-second welcome animation finishes before the journal mounts, so no Firestore subscriptions start before authorized login. Social sign-in and the old instant-access bypass are removed. Sign out using the header icon.
+The guardian stands facing forward, follows email entry, covers both eyes with his hands during password entry, and gives a thumbs up after successful sign-in. Reduced-motion preferences disable animation. The 1.5-second welcome animation finishes before the journal mounts, so no Firestore subscriptions start before authorized login. Social sign-in and the old instant-access bypass are removed. Sign out using the header icon.
 
 ## Verification
 

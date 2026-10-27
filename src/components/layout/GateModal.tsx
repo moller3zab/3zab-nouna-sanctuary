@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { getAuth, sendPasswordResetEmail, signInWithEmailAndPassword, signOut } from 'firebase/auth';
-import { ArrowRight, Code2, Eye, EyeOff, Heart, Loader2, LockKeyhole, Mail } from 'lucide-react';
+import { ArrowRight, Eye, EyeOff, Heart, Loader2, LockKeyhole, Mail } from 'lucide-react';
 import app from '../../lib/firebase';
 import { isAllowedUser } from '../../config/access';
 import { useIdentity } from '../../context/IdentityContext';
@@ -43,7 +43,7 @@ export function GateModal({ onCelebrating }: { onCelebrating: (value: boolean) =
   return <main className="sanctuary-login">
     <div className="sanctuary-stars" aria-hidden="true"/><div className="sanctuary-window" aria-hidden="true"><i/><i/><i/></div><div className="sanctuary-lamp" aria-hidden="true"/>
     <section className="sanctuary-entry" aria-labelledby="sanctuary-title">
-      <header className="sanctuary-heading"><div className="sanctuary-emblem"><span/><Code2 size={24}/><span/></div><p className="sanctuary-eyebrow">Confidential sanctuary</p><h1 id="sanctuary-title">3zab <span>♡</span> Nouna</h1><p className="sanctuary-subtitle">A private world, just for us.</p></header>
+      <header className="sanctuary-heading"><p className="sanctuary-eyebrow">Confidential sanctuary</p><h1 id="sanctuary-title">Squidward</h1><p className="sanctuary-subtitle">A private world, just for us.</p></header>
       <SanctuaryCharacter mood={mood} gaze={mood === 'email' ? Math.min(9, email.length / 3) - 4 : 0}/>
       <form className="sanctuary-glass" onSubmit={handleSubmit} aria-busy={busy || authLoading}>
         <label className="sanctuary-field"><span className="sanctuary-field-icon"><Mail size={21}/></span><span className="sr-only">Email address</span><input type="email" autoComplete="username" required placeholder="Email address" value={email} onChange={(e) => setEmail(e.target.value)} onFocus={() => !busy && setMood('email')} onBlur={() => !busy && setMood('idle')} disabled={busy || authLoading}/></label>
