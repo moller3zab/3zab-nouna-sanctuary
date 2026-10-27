@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useId } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X } from 'lucide-react';
 
@@ -19,7 +19,10 @@ export const Modal: React.FC<ModalProps> = ({
   children,
   maxWidth = 'md'
 }) => {
+  const headingId = useId();
   useEffect(() => {
+    if (!isOpen) return;
+    const previousOverflow = document.body.style.overflow;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose();
     };
@@ -28,7 +31,7 @@ export const Modal: React.FC<ModalProps> = ({
       window.addEventListener('keydown', handleKeyDown);
     }
     return () => {
-      document.body.style.overflow = 'unset';
+      document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
   }, [isOpen, onClose]);
@@ -57,6 +60,9 @@ export const Modal: React.FC<ModalProps> = ({
 
           {/* Dialog */}
           <motion.div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby={headingId}
             initial={{ opacity: 0, scale: 0.95, y: 10 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: 10 }}
@@ -64,6 +70,7 @@ export const Modal: React.FC<ModalProps> = ({
             className={`relative w-full ${maxWidthClasses[maxWidth]} bg-surface-lowest dark:bg-surface-dark-card border border-primary/10 dark:border-white/10 rounded-2xl p-6 sm:p-8 shadow-2xl z-10`}
           >
             <button
+              aria-label="Close dialog"
               onClick={onClose}
               className="absolute top-4 right-4 w-9 h-9 rounded-full bg-surface-low dark:bg-white/10 flex items-center justify-center text-ink-subtle hover:text-primary dark:hover:text-white transition-colors"
             >
@@ -78,7 +85,7 @@ export const Modal: React.FC<ModalProps> = ({
                   </span>
                 )}
                 {title && (
-                  <h3 className="font-serif text-2xl sm:text-3xl text-primary dark:text-surface-bright font-semibold">
+                  <h3 id={headingId} className="font-serif text-2xl sm:text-3xl text-primary dark:text-surface-bright font-semibold">
                     {title}
                   </h3>
                 )}

@@ -60,6 +60,10 @@ export const MoodWidget: React.FC = () => {
 
   const renderMoodCard = (label: string, mood: MoodStatus | undefined, isMe: boolean) => (
     <div
+      role={isMe ? 'button' : undefined}
+      tabIndex={isMe ? 0 : undefined}
+      aria-label={isMe ? 'Update my mood' : undefined}
+      onKeyDown={event => { if (isMe && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); setIsEditing(true); } }}
       className={`flex flex-col gap-2 p-3 sm:p-4 bg-surface-low dark:bg-white/5 rounded-2xl flex-1 border border-primary/5 dark:border-white/10 transition-all ${isMe ? 'cursor-pointer hover:bg-surface-high dark:hover:bg-white/10' : ''}`}
       onClick={() => isMe && setIsEditing(true)}
     >
@@ -121,6 +125,7 @@ export const MoodWidget: React.FC = () => {
                   maxLength={60}
                 />
                 <button
+                  aria-label="Save mood"
                   onClick={handleSave}
                   className="bg-primary text-white px-4 py-2 rounded-xl flex items-center justify-center hover:bg-primary/90 transition-colors shadow-sm"
                 >

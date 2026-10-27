@@ -11,9 +11,9 @@ function setup() {
     db: {}, collection: (_, name) => ({ name }), doc: (_, name, id) => ({ name, id }),
     onSnapshot: (ref, next, error) => { subscriptions.push({ ref, next, error }); return () => {}; },
     addDoc: async (ref, data) => { if (fail) throw { code: 'permission-denied' }; writes.push({ ref, data }); return { id: 'new-id' }; },
-    setDoc: async (ref, data) => { writes.push({ ref, data }); },
-    updateDoc: async (ref, data) => { writes.push({ ref, data }); },
-    deleteDoc: async ref => { writes.push({ ref }); },
+    setDoc: async (ref, data) => { if (fail) throw { code: 'permission-denied' }; writes.push({ ref, data }); },
+    updateDoc: async (ref, data) => { if (fail) throw { code: 'permission-denied' }; writes.push({ ref, data }); },
+    deleteDoc: async ref => { if (fail) throw { code: 'permission-denied' }; writes.push({ ref }); },
   };
   const code = ts.transpileModule(fs.readFileSync('src/lib/store.ts', 'utf8'), { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } }).outputText;
   const module = { exports: {} };
@@ -56,4 +56,17 @@ test('peace room writes remove undefined optional fields Firestore cannot accept
   const { store, writes } = setup();
   await store.savePeaceRoom({ user3zab: undefined, reconciled: false, updatedAt: 1 });
   assert.equal(Object.hasOwn(writes[0].data, 'user3zab'), false);
+});
+test('legacy Firestore timestamps become numeric dates used by chat and letters', () => {
+  const { store, subscriptions } = setup(); let items;
+  store.subscribeCollection('messages', [], value => { items = value; });
+  subscriptions[0].next({ docs: [{ id: 'timestamp', data: () => ({ createdAt: { toMillis: () => 123456 }, text: 'Earlier message' }) }] });
+  assert.equal(items[0].createdAt, 123456);
+});
+test('failed edits and deletes reject without pretending a record was changed', async () => {
+  const { store, failWrites, writes, events } = setup(); failWrites();
+  await assert.rejects(store.updateItem('letters', 'existing', { title: 'Unsaved' }));
+  await assert.rejects(store.removeItem('polaroids', 'existing'));
+  assert.equal(writes.length, 0);
+  assert.equal(events.filter(event => event.type === 'ocean-write-error').length, 2);
 });

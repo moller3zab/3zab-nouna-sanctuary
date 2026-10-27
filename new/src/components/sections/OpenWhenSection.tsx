@@ -61,16 +61,20 @@ export const OpenWhenSection: React.FC = () => {
     setCategory(item.category);
     setTitle(item.title);
     setMessage(item.message);
+    setSelectedEnvelope(null);
     setEditingId(item.id);
     setSelectedEnvelope(null);
     setIsModalOpen(true);
   };
 
-  const handleDeleteOpenWhen = (id: string) => {
+  const handleDeleteOpenWhen = async (id: string) => {
+    try {
     if (window.confirm("Are you sure you want to delete this envelope?")) {
-      removeItem('openWhen', id);
+      await removeItem('openWhen', id);
       setSelectedEnvelope(null);
     }
+  
+    } catch (error) { console.error('Archive operation failed:', error); }
   };
 
   return (

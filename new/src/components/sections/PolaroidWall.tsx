@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Camera, GripHorizontal, Image as ImageIcon, Plus, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowLeft, ArrowRight, ArrowUp, Camera, Edit3, GripHorizontal, Image as ImageIcon, Plus, Trash2 } from 'lucide-react';
 import type { Polaroid } from '../../types';
 import { INITIAL_POLAROIDS } from '../../data/initialData';
 import { addItem, removeItem, subscribeCollection, updateItem } from '../../lib/store';
@@ -41,17 +41,19 @@ interface PolaroidCardProps {
   item: Polaroid;
   draggable?: boolean;
   wallRef?: React.RefObject<HTMLDivElement>;
+  onEdit: (item: Polaroid) => void;
   onDelete: (id: string) => void;
   onMove: (item: Polaroid, direction: Direction) => void;
   onDragEnd?: (item: Polaroid, offset: { x: number; y: number }) => void;
 }
 
-const PolaroidCard: React.FC<PolaroidCardProps> = ({ item, draggable = false, wallRef, onDelete, onMove, onDragEnd }) => {
+const PolaroidCard: React.FC<PolaroidCardProps> = ({ item, draggable = false, wallRef, onEdit, onDelete, onMove, onDragEnd }) => {
   const reducedMotion = useReducedMotion();
   const card = (
     <>
       <div className="relative aspect-[1.04/1] overflow-hidden bg-surface-low">
         <img src={item.imageUrl} alt={item.note || `Memory from ${item.date}`} className="h-full w-full object-cover" loading="lazy" />
+        <button type="button" aria-label={`Edit photo: ${item.note || item.date}`} onPointerDown={event => event.stopPropagation()} onClick={() => onEdit(item)} className="absolute right-12 top-2 grid h-9 w-9 place-items-center rounded-full bg-black/45 text-white shadow-sm backdrop-blur-sm"><Edit3 size={15}/></button>
         <button
           type="button"
           onPointerDown={(event) => event.stopPropagation()}
@@ -108,13 +110,16 @@ export const PolaroidWall: React.FC = () => {
   const wallRef = useRef<HTMLDivElement>(null);
   const [polaroids, setPolaroids] = useState<Polaroid[]>(INITIAL_POLAROIDS);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [imageUrl, setImageUrl] = useState('');
   const [note, setNote] = useState('');
   const [date, setDate] = useState('');
 
   useEffect(() => subscribeCollection<Polaroid>('polaroids', INITIAL_POLAROIDS, setPolaroids), []);
 
+  const handleEdit = (item: Polaroid) => { setEditingId(item.id); setImageUrl(item.imageUrl); setNote(item.note); setDate(item.date); setIsModalOpen(true); };
   const resetForm = () => {
+    setEditingId(null);
     setImageUrl('');
     setNote('');
     setDate('');
@@ -153,6 +158,7 @@ export const PolaroidWall: React.FC = () => {
       rotation: [-6, -3, 4, 7][count % 4],
       createdAt,
     };
+    if (editingId) { await updateItem('polaroids', editingId, { imageUrl, note, date }); resetForm(); setIsModalOpen(false); return; }
     const id = await addItem<Partial<Polaroid>>('polaroids', newPolaroid);
     
     // Send notification
@@ -213,14 +219,14 @@ export const PolaroidWall: React.FC = () => {
       <div className="ocean-photo-wall mt-6 rounded-[1.75rem] border border-primary/15 bg-[#acd8ea] p-3 shadow-inner dark:border-white/10 dark:bg-[#2a2021] sm:p-5">
         <p className="mb-3 flex items-center gap-2 px-1 text-xs font-medium text-primary/70 dark:text-surface-bright/70"><GripHorizontal className="h-4 w-4" aria-hidden="true" /> Drag photos around — their places are saved.</p>
         <div ref={wallRef} className="relative hidden min-h-[530px] overflow-hidden rounded-[1.15rem] border border-primary/10 bg-[#d6b894] [background-image:linear-gradient(rgba(76,13,29,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(76,13,29,0.045)_1px,transparent_1px)] [background-size:24px_24px] dark:border-white/5 dark:bg-[#1c1515] md:block">
-          {polaroids.map((item) => <PolaroidCard key={item.id} item={item} draggable wallRef={wallRef} onDelete={handleDelete} onMove={handleMove} onDragEnd={handleDragEnd} />)}
+          {polaroids.map((item) => <PolaroidCard key={item.id} item={item} draggable wallRef={wallRef} onEdit={handleEdit} onDelete={handleDelete} onMove={handleMove} onDragEnd={handleDragEnd} />)}
         </div>
         <div className="grid grid-cols-2 gap-3 md:hidden">
-          {polaroids.map((item) => <PolaroidCard key={item.id} item={item} onDelete={handleDelete} onMove={handleMove} />)}
+          {polaroids.map((item) => <PolaroidCard key={item.id} item={item} onEdit={handleEdit} onDelete={handleDelete} onMove={handleMove} />)}
         </div>
       </div>
 
-      <Modal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); resetForm(); }} title="Add to the Polaroid Wall" subtitle="A LITTLE MOMENT TO KEEP">
+      <Modal isOpen={isModalOpen} onClose={() => { setIsModalOpen(false); resetForm(); }} title={editingId ? "Edit Polaroid" : "Add to the Polaroid Wall"} subtitle="A LITTLE MOMENT TO KEEP">
         <form onSubmit={handleAdd} className="flex flex-col gap-4">
           <Input label="Small note" placeholder="e.g. Your laugh after the first sip" value={note} onChange={(event) => setNote(event.target.value)} required />
           <Input label="Date or tiny caption" placeholder="e.g. 04.09.2026" value={date} onChange={(event) => setDate(event.target.value)} />

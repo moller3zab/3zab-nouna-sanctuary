@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Cloud, CloudOff, RefreshCw, X } from 'lucide-react';
 
 export function ArchiveStatus() {
-  const [states, setStates] = useState<Record<string, { status: string; message: string }>>({});
+  const [states, setStates] = useState<Record<string, { status: string; message: string; count?: number }>>({});
   const [writeError, setWriteError] = useState('');
   useEffect(() => {
     const sync = (event: Event) => { const detail = (event as CustomEvent).detail; setStates(previous => ({ ...previous, [detail.name]: detail })); };
@@ -13,7 +13,7 @@ export function ArchiveStatus() {
   const errors = Object.values(states).filter(state => state.status === 'error');
   const pending = Object.values(states).some(state => state.status === 'loading');
   return <>
-    <div className={`ocean-sync-status ${errors.length ? 'has-error' : ''}`} role={errors.length ? 'alert' : 'status'}>
+    <div className={`ocean-sync-status ${errors.length ? 'has-error' : ''}`} role={errors.length ? 'alert' : 'status'} data-record-counts={JSON.stringify(Object.fromEntries(Object.entries(states).filter(([, state]) => state.count !== undefined).map(([name, state]) => [name, state.count])))} data-error-count={errors.length}>
       {errors.length ? <CloudOff size={16}/> : <Cloud size={16}/>}
       <span>{errors.length ? errors[0].message : pending ? 'Opening your private archive…' : 'Connected to your private archive'}</span>
       {!!errors.length && <button onClick={() => location.reload()}><RefreshCw size={13}/> Retry</button>}

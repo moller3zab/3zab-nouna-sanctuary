@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Bell, X, Trash2, ChevronRight } from 'lucide-react';
-import { subscribeCollection, removeNotification } from '../../lib/store';
+import { subscribeCollection, removeNotification, markNotificationRead } from '../../lib/store';
 import type { Notification as AppNotification } from '../../types';
 
 const SECTION_MAP: Record<string, string> = {
@@ -39,7 +39,8 @@ export const NotificationBell: React.FC = () => {
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  const handleNavigate = (notif: AppNotification) => {
+  const handleNavigate = async (notif: AppNotification) => {
+    if (!notif.isRead) { try { await markNotificationRead(notif.id); } catch { return; } }
     const sectionId = SECTION_MAP[notif.type] || 'memories';
     const el = document.getElementById(sectionId);
     if (el) el.scrollIntoView({ behavior: 'smooth' });

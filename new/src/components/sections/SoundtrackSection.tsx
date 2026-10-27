@@ -44,7 +44,7 @@ export const SoundtrackSection: React.FC = () => {
   const handleAddSong = async (e: React.FormEvent) => {
     try {
     e.preventDefault();
-    if (!title || !artist) return;
+    if (!title || !artist || !/^https?:\/\//i.test(url)) return;
 
     const data = {
       title,
@@ -79,16 +79,20 @@ export const SoundtrackSection: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDeleteSong = (id: string) => {
+  const handleDeleteSong = async (id: string) => {
+    try {
     if (window.confirm("Are you sure you want to delete this song?")) {
-      removeItem('songs', id);
+      await removeItem('songs', id);
     }
+  
+    } catch (error) { console.error('Archive operation failed:', error); }
   };
 
   const getEmbedUrl = (url: string, platform: string) => {
     if (!url || url === '#') return null;
     
     try {
+      if (platform === 'sound-cloud' || url.includes('soundcloud.com')) return 'https://w.soundcloud.com/player/?url=' + encodeURIComponent(url) + '&auto_play=false';
       if (platform === 'youtube' || url.includes('youtube.com') || url.includes('youtu.be')) {
         let videoId = '';
         if (url.includes('youtu.be/')) {
@@ -148,7 +152,7 @@ export const SoundtrackSection: React.FC = () => {
             </div>
           ) : (
             <div className="w-full rounded-xl overflow-hidden shadow-inner" style={{ height: '152px' }}>
-              <iframe src={embedUrl} width="100%" height="100%" frameBorder="0" allowFullScreen allow="clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+              <iframe title="Music player" src={embedUrl} width="100%" height="100%" frameBorder="0" allowFullScreen allow="clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
           )}
         </div>
@@ -194,17 +198,8 @@ export const SoundtrackSection: React.FC = () => {
             ))}
           </div>
 
-          {/* Controls */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => setIsPlaying(!isPlaying)}
-              className="w-12 h-12 rounded-full bg-primary dark:bg-primary-container text-white flex items-center justify-center shadow-md hover:scale-105 transition-all"
-            >
-              {isPlaying ? <Pause className="w-5 h-5 fill-current" /> : <Play className="w-5 h-5 fill-current ml-0.5" />}
-            </button>
-            <span className="text-xs font-semibold text-ink-subtle dark:text-ink-dark-muted hidden sm:inline">
-              {isPlaying ? 'Playing in sanctuary' : 'Paused'}
-            </span>
+            {activeSong && /\.(mp3|m4a|ogg|wav)(\?|$)/i.test(activeSong.url) ? <audio key={activeSong.id} src={activeSong.url} controls preload="none" onPlay={() => setIsPlaying(true)} onPause={() => setIsPlaying(false)} aria-label={activeSong.title} /> : activeSong?.url && activeSong.url !== '#' ? <a href={activeSong.url} target="_blank" rel="noopener noreferrer" className="rounded-full bg-primary text-white px-4 py-3 text-sm inline-flex items-center gap-2"><ExternalLink size={17}/> Open track</a> : <span className="text-sm text-ink-subtle">Add a track to listen.</span>}
           </div>
         </div>
       )}
@@ -218,16 +213,16 @@ export const SoundtrackSection: React.FC = () => {
             tabIndex={0}
             onClick={() => {
               setActiveSong(song);
-              setIsPlaying(true);
+              setIsPlaying(false);
             }}
             onKeyDown={(event) => {
               if (event.key === 'Enter' || event.key === ' ') {
                 event.preventDefault();
                 setActiveSong(song);
-                setIsPlaying(true);
+                setIsPlaying(false);
               }
             }}
-            aria-label={`Play ${song.title} by ${song.artist}`}
+            aria-label={`Select ${song.title} by ${song.artist}`}
             className="group cursor-pointer bg-surface-lowest dark:bg-surface-dark-card p-6 rounded-2xl shadow-soft border border-primary/10 dark:border-white/10 flex flex-col justify-between transition-all hover:-translate-y-0.5 hover:shadow-elevated focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 dark:focus-visible:ring-secondary-light dark:focus-visible:ring-offset-surface-dark"
           >
             <div>
@@ -277,7 +272,7 @@ export const SoundtrackSection: React.FC = () => {
             <div className="mt-4 pt-3 border-t border-primary/5 dark:border-white/5 flex items-center justify-between">
               <span className="flex items-center gap-1.5 text-xs font-bold text-primary dark:text-secondary-light">
                 <Play className="w-3.5 h-3.5 fill-current" aria-hidden="true" />
-                <span>Tap to play</span>
+                <span>Tap to load player</span>
               </span>
               {song.url && song.url !== '#' && (
                 <a

@@ -119,14 +119,20 @@ export const MemoriesSection: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleToggleLike = (memory: Memory) => {
-    updateItem('memories', memory.id, { likes: memory.likes + 1 });
+  const handleToggleLike = async (memory: Memory) => {
+    try {
+    await updateItem('memories', memory.id, { likes: memory.likes + 1 });
+  
+    } catch (error) { console.error('Archive operation failed:', error); }
   };
 
-  const handleDeleteMemory = (id: string) => {
+  const handleDeleteMemory = async (id: string) => {
+    try {
     if (window.confirm("Are you sure you want to delete this memory?")) {
-      removeItem('memories', id);
+      await removeItem('memories', id);
     }
+  
+    } catch (error) { console.error('Archive operation failed:', error); }
   };
 
   const filteredMemories = activeFilter === 'All Preserved'

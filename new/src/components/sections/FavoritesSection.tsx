@@ -93,10 +93,13 @@ export const FavoritesSection: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDeleteFavorite = (id: string) => {
+  const handleDeleteFavorite = async (id: string) => {
+    try {
     if (window.confirm("Are you sure you want to delete this favorite?")) {
-      removeItem('favorites', id);
+      await removeItem('favorites', id);
     }
+  
+    } catch (error) { console.error('Archive operation failed:', error); }
   };
 
   const nounaFavorites = favorites.filter(f => f.author === 'Nouna');
@@ -157,10 +160,10 @@ export const FavoritesSection: React.FC = () => {
                   <p className="font-serif text-lg font-bold text-primary dark:text-surface-bright">{fav.item}</p>
                 </div>
                 <div className="absolute top-1/2 -translate-y-1/2 right-3 flex gap-2 opacity-0 sm:opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => handleEditFavorite(fav)} className="text-ink-subtle hover:text-primary p-1">
+                  <button aria-label="Edit favorite" onClick={() => handleEditFavorite(fav)} className="text-ink-subtle hover:text-primary p-1">
                     <Edit3 className="w-4 h-4" />
                   </button>
-                  <button onClick={() => handleDeleteFavorite(fav.id)} className="text-ink-subtle hover:text-red-500 p-1">
+                  <button aria-label="Delete favorite" onClick={() => handleDeleteFavorite(fav.id)} className="text-ink-subtle hover:text-red-500 p-1">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>
@@ -202,10 +205,10 @@ export const FavoritesSection: React.FC = () => {
                   <p className="font-serif text-lg font-bold text-primary dark:text-surface-bright">{fav.item}</p>
                 </div>
                 <div className="absolute top-1/2 -translate-y-1/2 right-3 flex gap-2 opacity-0 sm:opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                  <button onClick={() => handleEditFavorite(fav)} className="text-ink-subtle hover:text-primary p-1">
+                  <button aria-label="Edit favorite" onClick={() => handleEditFavorite(fav)} className="text-ink-subtle hover:text-primary p-1">
                     <Edit3 className="w-4 h-4" />
                   </button>
-                  <button onClick={() => handleDeleteFavorite(fav.id)} className="text-ink-subtle hover:text-red-500 p-1">
+                  <button aria-label="Delete favorite" onClick={() => handleDeleteFavorite(fav.id)} className="text-ink-subtle hover:text-red-500 p-1">
                     <Trash2 className="w-4 h-4" />
                   </button>
                 </div>

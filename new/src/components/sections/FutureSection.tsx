@@ -65,15 +65,22 @@ export const FutureSection: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleToggleComplete = (dream: FutureDream) => {
-    updateItem('futureDreams', dream.id, {
+  const handleToggleComplete = async (dream: FutureDream) => {
+    try {
+    await updateItem('futureDreams', dream.id, {
       completed: !dream.completed,
       completedAt: !dream.completed ? Date.now() : null
     });
+  
+    } catch (error) { console.error('Archive operation failed:', error); }
   };
 
-  const handleDelete = (id: string) => {
-    removeItem('futureDreams', id);
+  const handleDelete = async (id: string) => {
+    try {
+    if (!window.confirm('Delete this dream?')) return;
+    await removeItem('futureDreams', id);
+  
+    } catch (error) { console.error('Archive operation failed:', error); }
   };
 
   return (
@@ -116,7 +123,7 @@ export const FutureSection: React.FC = () => {
             >
               <div className="flex items-center gap-3.5 flex-1 min-w-0">
                 <button
-                  onClick={() => handleToggleComplete(dream)}
+                  aria-label={dream.completed ? `Mark ${dream.title} incomplete` : `Complete ${dream.title}`} onClick={() => handleToggleComplete(dream)}
                   className="text-secondary hover:scale-110 transition-transform shrink-0"
                 >
                   {dream.completed ? (

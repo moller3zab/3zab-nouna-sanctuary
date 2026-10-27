@@ -63,10 +63,13 @@ export const Things21Section: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDeleteItem = (id: string) => {
+  const handleDeleteItem = async (id: string) => {
+    try {
     if (window.confirm("Are you sure you want to delete this item?")) {
-      removeItem('things21', id);
+      await removeItem('things21', id);
     }
+  
+    } catch (error) { console.error('Archive operation failed:', error); }
   };
 
   return (

@@ -59,10 +59,13 @@ export const LoveReasonsSection: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDeleteReason = (id: string) => {
+  const handleDeleteReason = async (id: string) => {
+    try {
     if (window.confirm("Are you sure you want to delete this reason?")) {
-      removeItem('loveReasons', id);
+      await removeItem('loveReasons', id);
     }
+  
+    } catch (error) { console.error('Archive operation failed:', error); }
   };
 
   return (

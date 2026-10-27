@@ -76,10 +76,13 @@ export const TimelineSection: React.FC = () => {
     setIsModalOpen(true);
   };
 
-  const handleDeleteMilestone = (id: string) => {
+  const handleDeleteMilestone = async (id: string) => {
+    try {
     if (window.confirm("Are you sure you want to delete this milestone?")) {
-      removeItem('milestones', id);
+      await removeItem('milestones', id);
     }
+  
+    } catch (error) { console.error('Archive operation failed:', error); }
   };
 
   return (

@@ -1,15 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Heart, Sparkles, MessageCircle } from 'lucide-react';
+import { Send, Heart, Sparkles, MessageCircle, Edit3, Trash2, X } from 'lucide-react';
 import type { ChatMessage } from '../../types';
 import { INITIAL_MESSAGES } from '../../data/initialData';
-import { subscribeCollection, addItem } from '../../lib/store';
+import { subscribeCollection, addItem, updateItem, removeItem } from '../../lib/store';
 import { useIdentity } from '../../context/IdentityContext';
 
 export const ChatSection: React.FC = () => {
   const { identity } = useIdentity();
   const [messages, setMessages] = useState<ChatMessage[]>(INITIAL_MESSAGES);
   const [text, setText] = useState('');
+  const [editingId, setEditingId] = useState<string | null>(null);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ export const ChatSection: React.FC = () => {
     e.preventDefault();
     if (!text.trim()) return;
 
+    if (editingId) { await updateItem('messages', editingId, { text: text.trim() }); setEditingId(null); setText(''); return; }
     const msg = text;
 
     const id = await addItem<Partial<ChatMessage>>('messages', {
@@ -110,7 +112,12 @@ export const ChatSection: React.FC = () => {
                       : 'bg-surface-low dark:bg-white/10 text-ink dark:text-surface-bright rounded-bl-none border border-primary/5'
                   }`}
                 >
+                  {msg.imageUrl && <img src={msg.imageUrl} alt="Shared photo" className="mb-2 max-h-64 rounded-lg"/>}
                   {msg.text}
+                  <div className="flex justify-end gap-2 mt-2">
+                    <button type="button" aria-label="Edit message" onClick={() => { setText(msg.text || ''); setEditingId(msg.id); }}><Edit3 size={13}/></button>
+                    <button type="button" aria-label="Delete message" onClick={async () => { if (!confirm('Delete this message?')) return; try { await removeItem('messages', msg.id); if (editingId === msg.id) { setEditingId(null); setText(''); } } catch (error) { console.error(error); } }}><Trash2 size={13}/></button>
+                  </div>
                 </div>
               </motion.div>
             );
@@ -120,13 +127,17 @@ export const ChatSection: React.FC = () => {
         {/* Chat Input Form */}
         <form onSubmit={handleSend} className="p-4 border-t border-primary/10 dark:border-white/10 bg-surface-low dark:bg-white/5 flex items-center gap-2">
           <input
+            aria-label="Message"
             type="text"
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={`Type a private message as ${identity}...`}
             className="flex-1 px-4 py-2.5 rounded-xl bg-surface-lowest dark:bg-white/5 border border-primary/10 dark:border-white/10 text-sm text-ink dark:text-surface-bright placeholder:text-ink-subtle focus:outline-none focus:ring-2 focus:ring-primary/30"
           />
+          {editingId && <button type="button" aria-label="Cancel message edit" onClick={() => { setEditingId(null); setText(''); }}><X size={18}/></button>}
           <button
+            aria-label={editingId ? 'Save message' : 'Send message'}
+            disabled={!text.trim()}
             type="submit"
             className="w-10 h-10 rounded-xl bg-primary text-white flex items-center justify-center shadow-md hover:bg-primary-container transition-colors shrink-0"
           >

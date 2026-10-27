@@ -35,3 +35,6 @@ Do not deploy this preview over production until you choose to replace the origi
 
 ## Preserved legacy media
 The original relationship date (2026-09-04) and existing finale video are retained as fallbacks until settings/site supplies replacements. Music embeds use autoplay=0 and have no autoplay permission. Add Memory lets you choose Curated Gallery (memories) or Polaroid Wall (polaroids).
+
+## Functional audit
+The browser-audit.js runner is a Playwright callback used by the browser tool with browser-fixture.js in an isolated context. It checks add/edit/delete through the actual interface for nine journal collections, with no production writes. Additional browser checks covered Polaroid add/edit/move/delete, countdown add/edit/delete, chat send/edit/delete, dream completion, moods, peace room submission, notification read/clear, settings, failed writes/deletes, theme switching, and mobile navigation. Unit tests cover eight data-adapter behaviors including timestamp compatibility and rejected updates/deletes.

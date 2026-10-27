@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Calendar, Heart, Plane, Star, Plus, Trash2, X } from 'lucide-react';
-import { subscribeCollection, addItem, removeItem } from '../../lib/store';
+import { Calendar, Heart, Plane, Star, Plus, Trash2, Edit3, X } from 'lucide-react';
+import { subscribeCollection, addItem, updateItem, removeItem } from '../../lib/store';
 import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
@@ -34,6 +34,7 @@ function getTimeLeft(targetDate: string) {
 
 export const CountdownSection: React.FC = () => {
   const [countdowns, setCountdowns] = useState<Countdown[]>([]);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [showAdd, setShowAdd] = useState(false);
   const [newTitle, setNewTitle] = useState('');
   const [newDate, setNewDate] = useState('');
@@ -54,11 +55,13 @@ export const CountdownSection: React.FC = () => {
   const handleAdd = async () => {
     try {
     if (!newTitle.trim() || !newDate) return;
-    await addItem('countdowns', {
+    const record = {
       title: newTitle.trim(),
       targetDate: new Date(newDate).toISOString(),
       icon: newIcon,
-    });
+    };
+    if (editingId) await updateItem('countdowns', editingId, record); else await addItem('countdowns', record);
+    setEditingId(null);
     setNewTitle('');
     setNewDate('');
     setShowAdd(false);
@@ -68,6 +71,7 @@ export const CountdownSection: React.FC = () => {
 
   const handleDelete = async (id: string) => {
     try {
+    if (!confirm('Delete this countdown?')) return;
     await removeItem('countdowns', id);
     setCountdowns(prev => prev.filter(c => c.id !== id));
   
@@ -86,7 +90,7 @@ export const CountdownSection: React.FC = () => {
           </p>
         </div>
         <button
-          onClick={() => setShowAdd(true)}
+          aria-label="Add countdown" onClick={() => { setEditingId(null); setNewTitle(''); setNewDate(''); setShowAdd(true); }}
           className="w-9 h-9 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 transition-colors shadow-sm"
         >
           <Plus className="w-4 h-4" />
@@ -104,8 +108,9 @@ export const CountdownSection: React.FC = () => {
               animate={{ opacity: 1, y: 0 }}
               className="bg-surface-lowest dark:bg-surface-dark-card p-5 rounded-2xl border border-primary/10 dark:border-white/10 shadow-soft relative group"
             >
+              <button aria-label="Edit countdown" className="absolute top-3 right-12 w-7 h-7 grid place-items-center text-secondary" onClick={() => { const d = new Date(cd.targetDate); setEditingId(cd.id); setNewTitle(cd.title); setNewIcon(cd.icon); setNewDate(new Date(d.getTime() - d.getTimezoneOffset() * 60000).toISOString().slice(0,16)); setShowAdd(true); }}><Edit3 size={14}/></button>
               <button
-                onClick={() => handleDelete(cd.id)}
+                aria-label="Delete countdown" onClick={() => handleDelete(cd.id)}
                 className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 w-6 h-6 rounded-full bg-red-100 dark:bg-red-900/30 flex items-center justify-center text-red-500 transition-all hover:scale-110"
               >
                 <Trash2 className="w-3 h-3" />
@@ -126,7 +131,7 @@ export const CountdownSection: React.FC = () => {
       </div>
 
       {/* Add Modal */}
-      <Modal isOpen={showAdd} onClose={() => setShowAdd(false)} title="إضافة حدث جديد">
+      <Modal isOpen={showAdd} onClose={() => setShowAdd(false)} title={editingId ? 'تعديل الحدث' : 'إضافة حدث جديد'}>
         <div className="space-y-4">
           <Input label="اسم الحدث" value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder="مثلاً: عيد ميلاد أنفال" />
           <div>
@@ -152,7 +157,7 @@ export const CountdownSection: React.FC = () => {
               ))}
             </div>
           </div>
-          <Button onClick={handleAdd} disabled={!newTitle.trim() || !newDate}>إضافة</Button>
+          <Button onClick={handleAdd} disabled={!newTitle.trim() || !newDate}>{editingId ? 'حفظ' : 'إضافة'}</Button>
         </div>
       </Modal>
     </section>

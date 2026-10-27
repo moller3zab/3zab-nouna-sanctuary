@@ -61,16 +61,20 @@ export const LettersSection: React.FC = () => {
     setTitle(item.title);
     setMessage(item.message);
     setRecipient(item.recipient);
+    setSelectedLetter(null);
     setEditingId(item.id);
     setSelectedLetter(null);
     setIsModalOpen(true);
   };
 
-  const handleDeleteLetter = (id: string) => {
+  const handleDeleteLetter = async (id: string) => {
+    try {
     if (window.confirm("Are you sure you want to delete this letter?")) {
-      removeItem('letters', id);
+      await removeItem('letters', id);
       setSelectedLetter(null);
     }
+  
+    } catch (error) { console.error('Archive operation failed:', error); }
   };
 
   return (

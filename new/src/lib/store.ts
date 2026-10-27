@@ -1,8 +1,8 @@
 import { db, collection, onSnapshot, addDoc, updateDoc, deleteDoc, doc, setDoc } from './firebase';
 import type { PeaceRoomData, MoodStatus, Notification as AppNotification } from '../types';
 
-export function reportSync(name: string, status: 'loading' | 'ready' | 'error', message = '') {
-  window.dispatchEvent(new CustomEvent('ocean-sync', { detail: { name, status, message } }));
+export function reportSync(name: string, status: 'loading' | 'ready' | 'error', message = '', count?: number) {
+  window.dispatchEvent(new CustomEvent('ocean-sync', { detail: { name, status, message, count } }));
 }
 const errorMessage = (error: unknown) => (error as { code?: string }).code === 'permission-denied'
   ? 'Access to the private archive was denied. Publish the rules for your two accounts, then retry.'
@@ -12,11 +12,14 @@ const errorMessage = (error: unknown) => (error as { code?: string }).code === '
 export function subscribeCollection<T extends { id: string }>(name: string, _unused: T[], callback: (data: T[]) => void) {
   reportSync(name, 'loading');
   return onSnapshot(collection(db, name), (snapshot) => {
-    const data = snapshot.docs.map(d => ({ ...d.data(), id: d.id })) as T[];
     const time = (value: unknown) => typeof value === 'number' ? value : (value as { toMillis?: () => number })?.toMillis?.() || 0;
+    const data = snapshot.docs.map(d => {
+      const fields = d.data();
+      return { ...fields, ...(fields.createdAt !== undefined ? { createdAt: time(fields.createdAt) } : {}), id: d.id };
+    }) as T[];
     data.sort((a, b) => time((b as Record<string, unknown>).createdAt) - time((a as Record<string, unknown>).createdAt));
     callback(data); // An empty collection clears the UI, including after deleting the final item.
-    reportSync(name, 'ready');
+    reportSync(name, 'ready', '', data.length);
   }, error => { callback([]); reportSync(name, 'error', errorMessage(error)); });
 }
 async function write<T>(action: () => Promise<T>): Promise<T> {
@@ -35,7 +38,7 @@ export function subscribePeaceRoom(callback: (data: PeaceRoomData) => void) {
   reportSync('peaceRoom', 'loading');
   return onSnapshot(doc(db, 'peaceRoom', 'currentSession'), snapshot => {
     callback(snapshot.exists() ? snapshot.data() as PeaceRoomData : { reconciled: false, updatedAt: 0 });
-    reportSync('peaceRoom', 'ready');
+    reportSync('peaceRoom', 'ready', '', snapshot.exists() ? 1 : 0);
   }, error => reportSync('peaceRoom', 'error', errorMessage(error)));
 }
 export const savePeaceRoom = (data: PeaceRoomData) => write(() => setDoc(doc(db, 'peaceRoom', 'currentSession'), JSON.parse(JSON.stringify(data))));
