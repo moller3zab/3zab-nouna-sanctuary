@@ -7,7 +7,10 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "test": "node --test tests/*.test.cjs"
+    "test": "node --test tests/*.test.cjs",
+    "predev": "node scripts/catalog-music.mjs",
+    "prebuild": "node scripts/catalog-music.mjs",
+    "postbuild": "node scripts/clean-incomplete-downloads.mjs"
   },
   "dependencies": {
     "clsx": "./clsx.tgz",
