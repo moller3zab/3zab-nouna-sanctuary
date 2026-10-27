@@ -10,7 +10,7 @@ export function SanctuaryCharacter({ mood, gaze }: { mood: CharacterMood; gaze: 
       <svg viewBox="0 0 400 590" aria-hidden="true">
         <defs>
           <linearGradient id="guardian-skin" x1="0" y1="0" x2="1" y2=".7">
-            <stop stopColor="#a5d5c9"/><stop offset=".55" stopColor="#86bcb3"/><stop offset="1" stopColor="#639e9d"/>
+            <stop stopColor="#b6d5c8"/><stop offset=".55" stopColor="#a8cbbc"/><stop offset="1" stopColor="#91b9aa"/>
           </linearGradient>
           <linearGradient id="guardian-polo" x1="0" y1="0" x2="1" y2="1">
             <stop stopColor="#b38b50"/><stop offset="1" stopColor="#795a34"/>
@@ -33,21 +33,20 @@ export function SanctuaryCharacter({ mood, gaze }: { mood: CharacterMood; gaze: 
           <g className="guardian-arm-right-rest" fill="url(#guardian-skin)"><path d="M278 295Q293 323 286 354Q285 369 274 365Q266 362 272 351Q275 327 260 307Z"/><path d="M282 351L277 357" fill="none" strokeWidth="2"/></g>
           </g>
           <g className="guardian-head">
-            <path d="M76 137C46 99 66 49 114 31C157 10 237 12 285 35C335 58 349 102 320 143Q298 175 253 181L248 258Q276 270 270 292Q266 316 237 307L171 301Q146 313 131 296Q119 275 148 260L144 181Q99 169 76 137Z" fill="url(#guardian-skin)"/>
-            <path d="M79 122Q65 84 100 56" fill="none" stroke="#c5e7d9" strokeWidth="5" opacity=".45"/>
+            <path d="M74 135C46 101 61 52 108 29C153 6 244 6 290 31C339 57 353 103 324 137Q301 164 261 172L261 245Q286 248 290 267Q292 289 274 289Q237 276 200 279Q161 276 126 289Q107 290 108 269Q109 249 139 245L139 172Q97 162 74 135Z" fill="url(#guardian-skin)"/>
             <g fill="#558f88" stroke="none" opacity=".65"><ellipse cx="121" cy="53" rx="6" ry="3.5" transform="rotate(-28 121 53)"/><ellipse cx="155" cy="38" rx="6" ry="3"/><ellipse cx="201" cy="32" rx="6" ry="3"/><ellipse cx="248" cy="41" rx="6" ry="3" transform="rotate(15 248 41)"/><ellipse cx="282" cy="60" rx="5" ry="3" transform="rotate(35 282 60)"/></g>
-            <path d="M151 83Q192 68 237 81M148 97Q194 81 241 94M152 111Q196 95 242 108" fill="none" stroke="#376b67" strokeWidth="2.3"/>
+            <path d="M218 69Q235 53 252 66M215 88Q237 70 254 86" fill="none" stroke="#294e43" strokeWidth="3"/>
             <g className="guardian-eyes-open">
-              <path d="M138 135Q160 120 189 132L196 172Q196 210 173 215Q145 210 141 179Z" fill="#f5e8b9"/>
-              <path d="M199 132Q229 121 251 134L248 181Q244 214 221 215Q200 210 198 172Z" fill="#f5e8b9"/>
-              <g style={{ transform: `translate(${gaze}px, 0)` }} fill="#8a3b25" stroke="none"><rect x="174" y="154" width="9" height="30" rx="3"/><rect x="216" y="154" width="9" height="24" rx="3"/></g>
-              <path d="M138 135Q162 121 190 132L194 155L141 157Z" fill="#8cbeb0"/>
-              <path d="M199 132Q228 121 251 134L249 157L199 155Z" fill="#8cbeb0"/>
+              <path d="M139 139Q144 115 164 115L182 115Q195 132 197 161Q198 207 172 212Q145 209 141 178Z" fill="#f7e9ad"/>
+              <path d="M203 161Q205 118 226 115Q250 112 260 140L259 178Q255 209 230 212Q203 207 203 161Z" fill="#f7e9ad"/>
+              <g style={{ transform: `translate(${gaze}px, 0)` }} fill="#1a2723" stroke="none"><rect x="170" y="157" width="8" height="22" rx="3"/><rect x="222" y="157" width="8" height="22" rx="3"/></g>
+              <path d="M139 139Q144 115 164 115L182 115Q193 131 196 157L139 157Z" fill="#9fc3b0"/>
+              <path d="M204 157Q205 118 226 115Q250 112 260 140L261 157Z" fill="#9fc3b0"/>
+              <path d="M138 157L195 157Q201 158 196 165L139 165Q132 164 138 157ZM204 157L261 157Q268 164 261 165L204 165Q199 164 204 157Z" fill="#a8cbbc" strokeWidth="2.5"/>
             </g>
             <g className="guardian-eyes-closed" fill="none"><path d="M148 158Q170 169 192 157M201 157Q223 169 244 158"/></g>
-            <path d="M142 282Q191 267 249 284M140 278L142 287M248 279L251 289" fill="none" strokeWidth="2.6"/>
-            <path d="M191 171Q156 183 147 224Q132 265 143 292Q151 313 172 306Q194 301 196 277Q198 242 192 222Q187 200 204 176" fill="url(#guardian-skin)"/>
-            <path d="M150 274Q148 289 159 295" fill="none" stroke="#c0e1d1" strokeWidth="3" opacity=".5"/>
+            <path d="M124 269Q162 253 200 260Q239 253 275 269M123 264L124 274M275 264L276 274" fill="none" strokeWidth="3"/>
+            <path d="M200 173Q179 199 169 230Q153 271 174 297Q185 311 200 313Q217 311 228 297Q249 271 231 230Q221 199 200 173Z" fill="url(#guardian-skin)"/>
           </g>
           {/* Raised arms render in front of the face; both palms actually cover the eyes. */}
           <g className="guardian-cover-eyes" fill="url(#guardian-skin)">
