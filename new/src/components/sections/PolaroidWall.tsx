@@ -210,7 +210,7 @@ export const PolaroidWall: React.FC = () => {
         </Button>
       </div>
 
-      <div className="mt-6 rounded-[1.75rem] border border-primary/15 bg-[#ecd6c0] p-3 shadow-inner dark:border-white/10 dark:bg-[#2a2021] sm:p-5">
+      <div className="ocean-photo-wall mt-6 rounded-[1.75rem] border border-primary/15 bg-[#acd8ea] p-3 shadow-inner dark:border-white/10 dark:bg-[#2a2021] sm:p-5">
         <p className="mb-3 flex items-center gap-2 px-1 text-xs font-medium text-primary/70 dark:text-surface-bright/70"><GripHorizontal className="h-4 w-4" aria-hidden="true" /> Drag photos around — their places are saved.</p>
         <div ref={wallRef} className="relative hidden min-h-[530px] overflow-hidden rounded-[1.15rem] border border-primary/10 bg-[#d6b894] [background-image:linear-gradient(rgba(76,13,29,0.045)_1px,transparent_1px),linear-gradient(90deg,rgba(76,13,29,0.045)_1px,transparent_1px)] [background-size:24px_24px] dark:border-white/5 dark:bg-[#1c1515] md:block">
           {polaroids.map((item) => <PolaroidCard key={item.id} item={item} draggable wallRef={wallRef} onDelete={handleDelete} onMove={handleMove} onDragEnd={handleDragEnd} />)}

@@ -99,7 +99,7 @@ export const SoundtrackSection: React.FC = () => {
         } else if (url.includes('youtube.com/embed/')) {
           videoId = url.split('youtube.com/embed/')[1].split('?')[0];
         }
-        if (videoId) return `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+        if (videoId) return `https://www.youtube.com/embed/${videoId}?autoplay=0`;
       }
       
       if (platform === 'spotify' || url.includes('spotify.com')) {
@@ -144,11 +144,11 @@ export const SoundtrackSection: React.FC = () => {
         <div className="bg-surface-container dark:bg-surface-dark-card p-4 sm:p-6 rounded-3xl shadow-elevated border border-primary/10 dark:border-white/10 w-full max-w-3xl mx-auto overflow-hidden">
           {embedUrl.includes('youtube') ? (
             <div className="w-full aspect-video rounded-xl overflow-hidden shadow-inner">
-              <iframe width="100%" height="100%" src={embedUrl} title="YouTube player" frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+              <iframe width="100%" height="100%" src={embedUrl} title="YouTube player" frameBorder="0" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
             </div>
           ) : (
             <div className="w-full rounded-xl overflow-hidden shadow-inner" style={{ height: '152px' }}>
-              <iframe src={embedUrl} width="100%" height="100%" frameBorder="0" allowFullScreen allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+              <iframe src={embedUrl} width="100%" height="100%" frameBorder="0" allowFullScreen allow="clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             </div>
           )}
         </div>

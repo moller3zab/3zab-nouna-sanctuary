@@ -32,3 +32,6 @@ Optional appearance settings live in `settings/site`: title, subtitle, relations
 `npm test` tests the actual data adapter with mocked Firebase calls: image values, missing createdAt, empty snapshots, denied reads, failed writes, and peace room fields. Browser visual checks use an isolated fixture; those records are not included in the running application. Live retrieval requires signing in with one of the two real accounts and published rules. Administrator access from the current CLI account remains unavailable, so the existing database cannot be independently inspected here.
 
 Do not deploy this preview over production until you choose to replace the original. Both folders target the same Firebase project; `firebase deploy --only hosting` would replace its hosted website.
+
+## Preserved legacy media
+The original relationship date (2026-09-04) and existing finale video are retained as fallbacks until settings/site supplies replacements. Music embeds use autoplay=0 and have no autoplay permission. Add Memory lets you choose Curated Gallery (memories) or Polaroid Wall (polaroids).

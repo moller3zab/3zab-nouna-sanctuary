@@ -16,7 +16,8 @@ export function HeroSection() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
   useEffect(() => { const timer = setInterval(() => setNow(Date.now()), 1000); return () => clearInterval(timer); }, []);
-  const start = Date.parse(settings.relationshipStartedAt || '');
+  const configuredStart = Date.parse(settings.relationshipStartedAt || '');
+  const start = Number.isFinite(configuredStart) ? configuredStart : Date.parse('2026-09-04T00:00:00');
   const elapsed = Number.isFinite(start) ? Math.max(0, Math.floor((now - start) / 1000)) : null;
   const units = elapsed === null ? ['—', '—', '—', '—'] : [Math.floor(elapsed / 86400), Math.floor(elapsed / 3600) % 24, Math.floor(elapsed / 60) % 60, elapsed % 60];
   return <section id="hero" className="ocean-hero">

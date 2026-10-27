@@ -15,6 +15,7 @@ const CATEGORIES = ['All Preserved', 'Zamalek Date', 'Special Days', 'Sweet Snap
 export const MemoriesSection: React.FC = () => {
   const { identity } = useIdentity();
   const [memories, setMemories] = useState<Memory[]>(INITIAL_MEMORIES);
+  const [destination, setDestination] = useState<'gallery' | 'wall'>('wall');
   const [view, setView] = useState<'gallery' | 'wall'>('wall');
   const [activeFilter, setActiveFilter] = useState('All Preserved');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -91,10 +92,14 @@ export const MemoriesSection: React.FC = () => {
       createdBy: identity,
     };
 
-    if (editingId) {
+    if (!editingId && destination === 'wall') {
+      await addItem('polaroids', { imageUrl, note: caption || title, date: date || 'A new favorite', createdBy: identity, x: 48, y: 48, rotation: -4 });
+      setView('wall');
+    } else if (editingId) {
       await updateItem('memories', editingId, data);
     } else {
       await addItem<Partial<Memory>>('memories', { ...data, likes: 1 });
+      setView('gallery');
     }
 
     resetForm();
@@ -110,6 +115,7 @@ export const MemoriesSection: React.FC = () => {
     setImageUrl(item.imageUrl);
     setTag(item.tag);
     setEditingId(item.id);
+    setDestination('gallery');
     setIsModalOpen(true);
   };
 
@@ -143,7 +149,7 @@ export const MemoriesSection: React.FC = () => {
           </p>
         </div>
 
-        <Button onClick={() => setIsModalOpen(true)} className="gap-2 shadow-md">
+        <Button onClick={() => { resetForm(); setDestination(view); setIsModalOpen(true); }} className="gap-2 shadow-md">
           <Camera className="w-4 h-4" />
           <span>Add Memory</span>
         </Button>
@@ -258,6 +264,11 @@ export const MemoriesSection: React.FC = () => {
         subtitle="SNAPSHOT IN TIME"
       >
         <form onSubmit={handleAddMemory} className="flex flex-col gap-4">
+          {!editingId && <label className="flex flex-col gap-2 text-sm text-ink-muted">Save this memory to
+            <select aria-label="Save this memory to" value={destination} onChange={e => setDestination(e.target.value as 'gallery' | 'wall')} className="rounded-xl border border-primary/20 bg-surface-low p-3 text-ink">
+              <option value="gallery">Curated Gallery</option><option value="wall">Polaroid Wall</option>
+            </select>
+          </label>}
           <Input
             label="Memory Title"
             placeholder="e.g. Sunset Coffee Walk"
